@@ -1,0 +1,22 @@
+button{
+    width: 550px;
+    margin-bottom: 50px;
+    height: 70px;
+    align-self: center;
+    background-color: #1dd79b;
+    border-color:#1dd79b;
+    color: grey;
+    cursor: pointer;
+}
+
+.keys{
+    align-self: center;
+    color: white;
+    font-size: 18px;
+}
+
+.main-buttons{
+    margin-top: 150px;
+    display: flex;
+    flex-direction: column;
+}
