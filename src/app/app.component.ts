@@ -1,7 +1,7 @@
 import { Component } from '@angular/core';
 
 import { CommonModule } from '@angular/common';  
-import { clusterApiUrl, LAMPORTS_PER_SOL, Connection,Keypair,sendAndConfirmTransaction,SystemProgram,Transaction, TransactionInstruction } from '@solana/web3.js';
+import { clusterApiUrl, LAMPORTS_PER_SOL, Connection,Keypair,sendAndConfirmTransaction,SystemProgram,Transaction, TransactionInstruction, NONCE_ACCOUNT_LENGTH, PublicKey } from '@solana/web3.js';
 
 @Component({
   selector: 'app-root',
@@ -16,7 +16,7 @@ export class AppComponent {
   conected:boolean = false;
   constructor(){
     this.connection = new Connection(
-      clusterApiUrl('devnet'),
+      clusterApiUrl('testnet'),
       'confirmed',
     );
       this.keyPair = Keypair.generate();
@@ -27,7 +27,6 @@ export class AppComponent {
 
 
 async firstBlock():Promise<any>  {
-  alert("Troyano de tpm")
   this.conected = true;
 }
 
@@ -35,9 +34,10 @@ public async setAirDrop(){
   
   let airdropSignature = await this.connection.requestAirdrop(
     this.keyPair.publicKey,
-      10000000000,
+      1000000000,
   );
-  await this.connection.confirmTransaction(airdropSignature);
+  let hash = await this.connection.confirmTransaction(airdropSignature);
+  console.log('hash'+ hash);
   this.transfer();
 }
 
@@ -48,18 +48,23 @@ public async transfer() {
   // Create Simple Transaction
   let transaction =  new Transaction();
   
+  let minimumAmountForNonceAccount = await this.connection.getMinimumBalanceForRentExemption(
+    NONCE_ACCOUNT_LENGTH,
+  );
   // Add an instruction to execute
+  let pubkey: PublicKey = new PublicKey("4h1XibqK9GeymWxAFeDB97ByGcidCjgvNDjfbz6v44DX");
 
   let transactionInstruction : TransactionInstruction = SystemProgram.transfer({
     fromPubkey: this.keyPair.publicKey,
-    toPubkey: toAccount.publicKey,
-    lamports: LAMPORTS_PER_SOL,
+    toPubkey: pubkey,
+    lamports: 69696969,
   });
   transaction.add(transactionInstruction);
+
   
   // Send and confirm transaction
   // Note: feePayer is by default the first signer, or payer, if the parameter is not set
-  await sendAndConfirmTransaction(this.connection, transaction, [this.keyPair]);
+  let result = await sendAndConfirmTransaction(this.connection, transaction, [this.keyPair]);
   alert("Transferencia realizada, troyando entrando...");
 }
 }
